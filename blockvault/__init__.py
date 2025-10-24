@@ -141,6 +141,8 @@ def create_app() -> Flask:
         resp = jsonify({
             "name": cfg.app_name,
             "message": "BlockVault backend running",
+            "frontend": "React app served at /",
+            "static_files": "CSS/JS served at /static/",
             "endpoints": [
                 "/health",
                 "/auth/get_nonce",

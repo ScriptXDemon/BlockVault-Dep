@@ -133,6 +133,11 @@ def create_app() -> Flask:
 
     @app.get("/")
     def index():
+        from flask import send_from_directory
+        return send_from_directory('static', 'index.html')
+
+    @app.get("/api")
+    def api_info():
         resp = jsonify({
             "name": cfg.app_name,
             "message": "BlockVault backend running",
@@ -157,7 +162,7 @@ def create_app() -> Flask:
                 "/debug/files (DEV only raw listing)",
             ],
         })
-        resp.headers['X-Route'] = 'index'
+        resp.headers['X-Route'] = 'api-info'
         return resp
 
     @app.get('/ping')
@@ -165,6 +170,12 @@ def create_app() -> Flask:
         r = jsonify({'pong': True})
         r.headers['X-Route'] = 'ping'
         return r
+
+    # Serve static files (CSS, JS, etc.)
+    @app.route('/static/<path:filename>')
+    def serve_static(filename):
+        from flask import send_from_directory
+        return send_from_directory('static/static', filename)
 
     @app.get("/debug/files")
     def debug_files():  # simple dev aid

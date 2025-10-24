@@ -175,7 +175,19 @@ def create_app() -> Flask:
     @app.route('/static/<path:filename>')
     def serve_static(filename):
         from flask import send_from_directory
-        return send_from_directory('static/static', filename)
+        return send_from_directory('static', filename)
+    
+    # Serve other static files (manifest, favicon, etc.)
+    @app.route('/<path:filename>')
+    def serve_other_static(filename):
+        from flask import send_from_directory, abort
+        import os
+        # Check if file exists in static directory
+        if os.path.exists(os.path.join('static', filename)):
+            return send_from_directory('static', filename)
+        else:
+            # For any other path, serve the React app (SPA routing)
+            return send_from_directory('static', 'index.html')
 
     @app.get("/debug/files")
     def debug_files():  # simple dev aid

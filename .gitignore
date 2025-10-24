@@ -76,7 +76,7 @@ storage/
 *.bin
 *.enc
 *.dec
-*.txt
+# Note: requirements.txt and runtime.txt are needed for deployment
 
 # Temporary files
 *.tmp

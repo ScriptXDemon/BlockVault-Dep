@@ -22,13 +22,13 @@ This repository contains the deployment-ready version of BlockVault for Render.c
    - `FLASK_ENV`: `production`
    - `SECRET_KEY`: Generate a secure random string
    - `JWT_SECRET`: Generate a secure random string
-   - `MONGO_URI`: Use Render's MongoDB service or external MongoDB
+   - `DB_PATH`: `blockvault.db` (SQLite database file)
    - `CORS_ALLOWED_ORIGINS`: `*` (or your specific domain)
 
-5. **Add MongoDB Database** (if using Render's MongoDB):
-   - Click "New +" → "PostgreSQL" (or use external MongoDB)
-   - Name: `blockvault-mongo`
-   - Connect to your web service
+5. **No Database Setup Required**: 
+   - SQLite database is file-based and requires no external service
+   - Database file will be created automatically on first run
+   - No additional costs for database hosting!
 
 ## Environment Variables
 
@@ -37,7 +37,7 @@ This repository contains the deployment-ready version of BlockVault for Render.c
 | `FLASK_ENV` | Flask environment | Yes | `production` |
 | `SECRET_KEY` | Flask secret key | Yes | - |
 | `JWT_SECRET` | JWT signing secret | Yes | - |
-| `MONGO_URI` | MongoDB connection string | Yes | - |
+| `DB_PATH` | SQLite database file path | No | `blockvault.db` |
 | `CORS_ALLOWED_ORIGINS` | CORS allowed origins | No | `*` |
 | `IPFS_ENABLED` | Enable IPFS integration | No | `false` |
 | `IPFS_API_URL` | IPFS API URL | No | - |
@@ -51,8 +51,10 @@ This repository contains the deployment-ready version of BlockVault for Render.c
 - **Encrypted file storage**: Client-side encryption with AES-256-GCM
 - **JWT Authentication**: Web3 wallet signature verification
 - **File sharing**: RSA-based encrypted passphrase sharing
+- **SQLite Database**: File-based database with no external dependencies
 - **IPFS Integration**: Optional decentralized storage
 - **Blockchain anchoring**: Optional on-chain file hash recording
+- **Zero Database Costs**: No MongoDB or external database required!
 
 ## API Endpoints
 
@@ -91,7 +93,7 @@ python app.py
 ## Troubleshooting
 
 - **Build fails**: Check Python version compatibility (3.10+)
-- **Database connection**: Verify MONGO_URI is correct
+- **Database issues**: SQLite database is created automatically, check file permissions
 - **CORS errors**: Update CORS_ALLOWED_ORIGINS
 - **File upload fails**: Check storage permissions and file size limits
 

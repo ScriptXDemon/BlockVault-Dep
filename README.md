@@ -2,7 +2,7 @@
 
 This edition removes legacy on‑chain role / access control logic and wallet network coupling. Core functionality now focuses on:
 
-* Local (or MongoDB) metadata storage
+* SQLite file-based metadata storage (no external database required)
 * AES‑GCM client‑side encryption with user‑provided passphrases
 * Optional RSA public key registration + encrypted share distribution
 * Clean React UI for upload, preview, verify, share, and download flows
@@ -56,14 +56,14 @@ pip install -e .[dev]
 
 # copy environment template
 cp .env.example .env
-# edit .env with your secrets and Mongo URI (no contract addresses needed)
+# edit .env with your secrets (no database setup needed)
 ```
 
 _Key environment variables_
 
 | Variable | Purpose |
 | --- | --- |
-| `MONGO_URI` | Mongo connection string (`memory://` for in-memory dev) |
+| `DB_PATH` | SQLite database file path (default: `blockvault.db`) |
 | `SECRET_KEY` / `JWT_SECRET` | Flask & JWT secrets |
 | `ETH_RPC_URL` | (Optional) Only needed if reintroducing blockchain features |
 | `ETH_RPC_URL` | (Optional) Needed for on-chain anchoring |
@@ -83,7 +83,7 @@ export FLASK_ENV=development
 python -m blockvault.app
 ```
 
-- **Mongo optional:** In-memory storage works for quick tests but resets on restart. Use Docker (`docker compose up -d mongo`) for persistence.
+- **SQLite database:** File-based storage that persists between restarts. No external database setup required!
 - **Dev convenience:** With `ALLOW_DEV_TOKEN=1`, retrieve a JWT without signing: `curl "http://localhost:5000/auth/dev_token?address=0xYourWallet"`.
 
 ### 3. Run the Frontend
@@ -203,9 +203,9 @@ pytest -q
 
 ## Deployment Notes
 
-- **Backend (Flask):** Suitable for Render, Railway, Fly.io, or Heroku. Run via `gunicorn blockvault.app:create_app()` and configure environment variables in the hosting dashboard. Mount persistent storage or connect to Atlas for MongoDB.
+- **Backend (Flask):** Suitable for Render, Railway, Fly.io, or Heroku. Run via `gunicorn blockvault.app:create_app()` and configure environment variables in the hosting dashboard. SQLite database requires no external setup.
 - **Frontend (React):** Deploy to Netlify, Vercel, or static S3 hosting. Configure `REACT_APP_API_BASE` to the backend URL and ensure the backend’s `CORS_ALLOWED_ORIGINS` includes the deployed origin.
-- **Secrets Management:** Never commit `.env`. For production, rotate JWT and Flask secrets and supply a production-grade MongoDB connection string.
+- **Secrets Management:** Never commit `.env`. For production, rotate JWT and Flask secrets. SQLite database requires no connection string.
 - **Monitoring:** Tail `backend.log` (or platform logs) for RBAC cache warnings and IPFS failures. Consider wrapping endpoints with structured logging before launch.
 
 ### Chain / Manifest Features
@@ -221,7 +221,7 @@ Removed. `/settings/import-manifest` now returns a placeholder response if invok
 | `nonce expired` | Slow login flow | Request new nonce (`/auth/get_nonce`) |
 | `missing bearer token` | Frontend lost JWT | Re-login; ensure toast host shows success |
 | `recipient has not registered a sharing public key` | Recipient skipped key upload | Have them POST `/users/public_key` |
-| Shares disappear after restart | Using memory DB | Switch to MongoDB instance |
+| Database file not found | SQLite file missing | Database will be created automatically |
 | `RBAC contract not configured` warning | Legacy log line (if any remains) | Safe to ignore (feature removed) |
 
 ---

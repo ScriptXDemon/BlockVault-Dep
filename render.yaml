@@ -7,18 +7,11 @@ services:
     envVars:
       - key: FLASK_ENV
         value: production
-      - key: MONGO_URI
-        fromDatabase:
-          name: blockvault-mongo
-          property: connectionString
+      - key: DB_PATH
+        value: blockvault.db
       - key: SECRET_KEY
         generateValue: true
       - key: JWT_SECRET
         generateValue: true
       - key: CORS_ALLOWED_ORIGINS
         value: "*"
-
-databases:
-  - name: blockvault-mongo
-    databaseName: blockvault
-    user: blockvault

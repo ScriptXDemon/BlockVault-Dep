@@ -16,7 +16,7 @@ def create_app() -> Flask:
     app.config.update(
         SECRET_KEY=cfg.secret_key,
         JWT_SECRET=cfg.jwt_secret,
-        MONGO_URI=cfg.mongo_uri,
+        DB_PATH=cfg.db_path,
         ENV=cfg.env,
         DEBUG=cfg.debug,
         IPFS_ENABLED=cfg.ipfs_enabled,
